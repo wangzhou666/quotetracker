@@ -9,7 +9,7 @@ class BaseIndexTickerRefresher(object):
   def __init__(self, db_client):
     self._client = db_client
     self._collection = None
-    self._data = set()
+    self._data = None
 
   def _read(self):
     pass
@@ -45,17 +45,18 @@ class SP500TickerRefresher(BaseIndexTickerRefresher):
     soup = bs(html)
     if is_table_changed(soup.table):
       raise RefreshError('The wiki page has been changed. Please consider refactor _read method.')
+    self._data = []
     for tr in soup.table.find_all('tr')[1:]:
       tds = tr.find_all('td')
-      entity = Ticker(symbol=tds[0].text,
-                      security=tds[1].text,
-                      reports=tds[2].a['href'],
-                      sector=tds[3].text,
-                      sub_industry=tds[4].text,
-                      location=tds[5].text,
-                      cik=tds[7].text,
-                      founded=tds[8].text)
-      self._data.add(entity)
+      entity = Ticker(symbol=tds[0].text.rstrip(),
+                      security=tds[1].text.rstrip(),
+                      reports=tds[2].a['href'].rstrip(),
+                      sector=tds[3].text.rstrip(),
+                      sub_industry=tds[4].text.rstrip(),
+                      location=tds[5].text.rstrip(),
+                      cik=tds[7].text.rstrip(),
+                      founded=tds[8].text.rstrip())
+      self._data.append(entity)
     
 
 class Ticker(object):
