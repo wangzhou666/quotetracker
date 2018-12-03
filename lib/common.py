@@ -1,0 +1,3 @@
+class UnrecongnizedDataException(Exception):
+  pass
+

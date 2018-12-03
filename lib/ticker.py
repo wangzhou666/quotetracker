@@ -1,8 +1,7 @@
 import requests
 from bs4 import BeautifulSoup as bs
+from .common import UnrecongnizedDataException
 
-class RefreshError(Exception):
-  pass
 
 class BaseIndexTickerRefresher(object):
 
@@ -44,7 +43,7 @@ class SP500TickerRefresher(BaseIndexTickerRefresher):
     html = requests.get(url).content
     soup = bs(html)
     if is_table_changed(soup.table):
-      raise RefreshError('The wiki page has been changed. Please consider refactor _read method.')
+      raise UnrecongnizedDataException('The wiki page has been changed. Please consider refactor _read method.')
     self._data = []
     for tr in soup.table.find_all('tr')[1:]:
       tds = tr.find_all('td')
