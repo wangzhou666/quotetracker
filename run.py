@@ -1,5 +1,5 @@
+from argparse import ArgumentParser
 from lib import ticker
-from optparse import OptionParser
 from pymongo import MongoClient
 
 MONGO_ENDPOINT = 'mongodb://root:jHabTlqz23@localhost:27017'
@@ -9,14 +9,14 @@ def refresh_indices_ticker(db_client):
   sp_refresher.refresh() 
 
 def main():
-  op = OptionParser()
-  op.add_option('--dryrun', dest='dryrun', action='store_true')
-  op.add_option('--refresh_index_tickers', dest='refresh_index_tickers', action='store_true')
-  option, _ = op.parse_args()
+  parser = ArgumentParser(description='Track the market.')
+  parser.add_argument('--dryrun', dest='dryrun', action='store_true')
+  parser.add_argument('--refresh_index_tickers', dest='refresh_index_tickers', action='store_true')
+  args = parser.parse_args()
 
-  if option.dryrun:
+  if args.dryrun:
     return
-  if option.refresh_index_tickers:
+  if args.refresh_index_tickers:
     db_client = MongoClient(MONGO_ENDPOINT)
     refresh_indices_ticker(db_client)
 
