@@ -5,9 +5,7 @@ class UnrecongnizedDataException(Exception):
 class BaseRefresher(object):
 
   def __init__(self, db_client):
-    self._client = db_client
-    self._collection = None
-    self._data = None
+    self._db_client = db_client
 
   def _read(self):
     pass
@@ -23,5 +21,5 @@ class BaseRefresher(object):
     self._write()
 
   def __del__(self):
-    self._client.close()
+    self._db_client.close()
 
