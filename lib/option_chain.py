@@ -18,15 +18,32 @@ class OptionType(Enum):
 
 class OptionQuote(object):  
 
-  fields = ['symbol', 'type', 'last_price', 'vol', 'open_int',
-            'strike_price', 'due_date', 'today_date']
+  static_fields = ['symbol', 'type', 'strike_price', 'due_date']
+  dynamic_fields = ['last_price', 'vol', 'open_int', 'today_date']
+  all_fields = static_fields + dynamic_fields
 
   def __init__(self, **kwargs):
-    self._data = {f: kwargs.get(f) for f in self.fields}
+    self._data = {f: kwargs.get(f) for f in self.all_fields}
 
   def __repr__(self):
     return repr(self._data)
 
+  def getkey(self):
+    return (self._data[f] for f in self.static_fields)
+
 class OptionChain(object):
-  pass
+  
+  def __init__(self, symbol, today_date):
+    self._symbol = symbol
+    self._today_date = today_date
+    self._data = {}
+
+  def with_quote(self, quote):
+    self._data[quote.getkey()] = quote
+    return self
+
+  def __repr__(self):
+    representation = '(symbol: %r, today_date: %r, data: %r)' % (
+        self._symbol, self._today_date, self._data)
+    return representation
 
